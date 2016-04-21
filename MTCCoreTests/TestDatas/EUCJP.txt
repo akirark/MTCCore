@@ -1,0 +1,5 @@
+Text Encoding Code : EUC-JP
+Byte Order Mark : -
+Endian : -
+
+このファイルはMTCCoreのテストファイルです。

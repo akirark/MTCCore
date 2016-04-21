@@ -1,0 +1,5 @@
+Text Encoding Code : UTF-8
+Byte Order Mark : なし
+Endian : -
+
+このファイルはMTCCoreのテストファイルです。
