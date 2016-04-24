@@ -122,4 +122,109 @@ class TextEncodingTests: XCTestCase {
         XCTAssertEqual(encodingInfo.hasBOM, true)
         XCTAssertEqual(encodingInfo.byteOrder, ByteOrder.BE)
     }
+    
+    func testReadTextEUCJP() {
+        let data = dataWithFileName("EUCJP.txt")
+        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        
+        let str = NSString(data: data, textEncodingInfo: encodingInfo)
+        XCTAssertNotNil(str, "Failed read the text with the encoding info")
+    }
+    
+    func testReadTextJIS() {
+        let data = dataWithFileName("JIS.txt")
+        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        
+        let str = NSString(data: data, textEncodingInfo: encodingInfo)
+        XCTAssertNotNil(str, "Failed read the text with the encoding info")
+    }
+
+    func testReadTextSJIS() {
+        let data = dataWithFileName("SJIS.txt")
+        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        
+        let str = NSString(data: data, textEncodingInfo: encodingInfo)
+        XCTAssertNotNil(str, "Failed read the text with the encoding info")
+    }
+
+    func testReadTextUTF8() {
+        let data = dataWithFileName("UTF8.txt")
+        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        
+        let str = NSString(data: data, textEncodingInfo: encodingInfo)
+        XCTAssertNotNil(str, "Failed read the text with the encoding info")
+    }
+    
+    func testReadTextUTF8_BOM() {
+        let data = dataWithFileName("UTF8_BOM.txt")
+        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        
+        let str = NSString(data: data, textEncodingInfo: encodingInfo)
+        XCTAssertNotNil(str, "Failed read the text with the encoding info")
+    }
+
+    func testReadTextUTF16BE() {
+        let data = dataWithFileName("UTF16BE.txt")
+        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        
+        let str = NSString(data: data, textEncodingInfo: encodingInfo)
+        XCTAssertNotNil(str, "Failed read the text with the encoding info")
+    }
+
+    func testReadTextUTF16BE_BOM() {
+        let data = dataWithFileName("UTF16BE_BOM.txt")
+        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        
+        let str = NSString(data: data, textEncodingInfo: encodingInfo)
+        XCTAssertNotNil(str, "Failed read the text with the encoding info")
+    }
+
+    func testReadTextUTF16LE() {
+        let data = dataWithFileName("UTF16LE.txt")
+        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        
+        let str = NSString(data: data, textEncodingInfo: encodingInfo)
+        XCTAssertNotNil(str, "Failed read the text with the encoding info")
+    }
+
+    func testReadTextUTF16LE_BOM() {
+        let data = dataWithFileName("UTF16LE_BOM.txt")
+        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        
+        let str = NSString(data: data, textEncodingInfo: encodingInfo)
+        XCTAssertNotNil(str, "Failed read the text with the encoding info")
+    }
+
+    func testReadTextUTF32BE() {
+        let data = dataWithFileName("UTF32BE.txt")
+        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        
+        let str = NSString(data: data, textEncodingInfo: encodingInfo)
+        XCTAssertNotNil(str, "Failed read the text with the encoding info")
+    }
+    
+    func testReadTextUTF32BE_BOM() {
+        let data = dataWithFileName("UTF32BE_BOM.txt")
+        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        
+        let str = NSString(data: data, textEncodingInfo: encodingInfo)
+        XCTAssertNotNil(str, "Failed read the text with the encoding info")
+    }
+    
+    func testReadTextUTF32LE() {
+        let data = dataWithFileName("UTF32LE.txt")
+        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        
+        let str = NSString(data: data, textEncodingInfo: encodingInfo)
+        XCTAssertNotNil(str, "Failed read the text with the encoding info")
+    }
+    
+    func testReadTextUTF32LE_BOM() {
+        let data = dataWithFileName("UTF32LE_BOM.txt")
+        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        
+        let str = NSString(data: data, textEncodingInfo: encodingInfo)
+        XCTAssertNotNil(str, "Failed read the text with the encoding info")
+    }
+
 }

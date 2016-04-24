@@ -348,4 +348,73 @@ public final class TextEncoding {
     private static func isIncludedInJISX0201Roman(c: UInt8) -> Bool {
         return (0x21 <= c && c <= 0x7E)
     }
+    
+}
+
+public extension NSString {
+    
+    /// Create an instance with the specified data and the encoding information.
+    /// \param data                 The text data
+    /// \param textEncodingInfo     The text encoding information
+    /// \return Created instance or nil if it failed read the text.
+    public convenience init?(data: NSData, textEncodingInfo info: TextEncodingInfo) {
+        var encoding: NSStringEncoding = NSMacOSRomanStringEncoding
+        
+        var textBytes = data.bytes
+        var textLength = data.length
+        var isValid = true
+        
+        if info.encodingCode == .ShiftJIS {
+            if info.charMapping == .Windows {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.DOSJapanese.rawValue))
+            } else {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.MacJapanese.rawValue))
+            }
+        } else if info.encodingCode == .JIS {
+            encoding = NSISO2022JPStringEncoding
+        } else if info.encodingCode == .EUCJP {
+            encoding = NSJapaneseEUCStringEncoding
+        } else if info.encodingCode == .UTF8 {
+            encoding = NSUTF8StringEncoding
+            
+            if info.hasBOM && textLength >= 3 {
+                textBytes = textBytes.advancedBy(3)
+                textLength -= 3
+            }
+        } else if info.encodingCode == .UTF16 {
+            if info.hasBOM && textLength >= 2 {
+                textBytes = textBytes.advancedBy(2)
+                textLength -= 2
+            }
+            
+            if info.byteOrder == .BE {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF16BE.rawValue)
+            } else if info.byteOrder == .LE {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF16LE.rawValue)
+            } else {
+                isValid = false
+            }
+        } else if info.encodingCode == .UTF32 {
+            if info.hasBOM && textLength >= 4 {
+                textBytes = textBytes.advancedBy(4)
+                textLength -= 4
+            }
+            
+            if info.byteOrder == .BE {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF32BE.rawValue)
+            } else if info.byteOrder == .LE {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF32LE.rawValue)
+            } else {
+                isValid = false
+            }
+        } else {
+            encoding = NSMacOSRomanStringEncoding
+        }
+        
+        if isValid {
+            self.init(data: data, encoding: encoding)
+        } else {
+            return nil
+        }
+    }
 }
