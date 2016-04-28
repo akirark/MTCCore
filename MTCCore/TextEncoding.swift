@@ -417,4 +417,92 @@ public extension NSString {
             return nil
         }
     }
+    
+    /// Create the text data with specified text encoding information.
+    /// \param info     The text encoding information.
+    /// \return         The encoded text data or nil if failed to create
+    public func dataUsingTextEncodingInfo(info: TextEncodingInfo) -> NSData? {
+        var data: NSData?
+        
+        if info.encodingCode == .ShiftJIS {
+            var encoding: NSStringEncoding
+            
+            if info.charMapping == .Windows {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.DOSJapanese.rawValue))
+            } else {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.MacJapanese.rawValue))
+            }
+            
+            data = self.dataUsingEncoding(encoding, allowLossyConversion: false)
+        } else if info.encodingCode == .JIS {
+            data = self.dataUsingEncoding(NSISO2022JPStringEncoding, allowLossyConversion: false)
+        } else if info.encodingCode == .EUCJP {
+            data = self.dataUsingEncoding(NSJapaneseEUCStringEncoding, allowLossyConversion: false)
+        } else if info.encodingCode == .UTF8 {
+            data = self.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+            
+            if data != nil && info.hasBOM {
+                var utf8bom: [UInt8] = [ 0xEF, 0xBB, 0xBF ]
+                let tempData = NSMutableData(bytes: &utf8bom, length: 3)
+                tempData.appendData(data!)
+                
+                data = tempData
+            }
+        } else if info.encodingCode == .UTF16 && (info.byteOrder == .BE || info.byteOrder == .LE) {
+            var encoding: NSStringEncoding
+            
+            if info.byteOrder == .BE {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF16BE.rawValue)
+            } else {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF16LE.rawValue)
+            }
+            
+            data = self.dataUsingEncoding(encoding, allowLossyConversion: false)
+            
+            if data != nil && info.hasBOM {
+                var utf16bom: [UInt8]
+                
+                if info.byteOrder == .BE {
+                    utf16bom = [0xFE, 0xFF]
+                } else {
+                    utf16bom = [0xFF, 0xFE]
+                }
+                
+                let tempData = NSMutableData()
+                tempData.appendBytes(&utf16bom, length: 2)
+                tempData.appendData(data!)
+                
+                data = tempData
+            }
+        } else if info.encodingCode == .UTF32 && (info.byteOrder == .BE || info.byteOrder == .LE) {
+            var encoding: NSStringEncoding
+            
+            if info.byteOrder == .BE {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF32BE.rawValue)
+            } else {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF32LE.rawValue)
+            }
+            
+            data = self.dataUsingEncoding(encoding, allowLossyConversion: false)
+            
+            if data != nil && info.hasBOM {
+                var utf32bom: [UInt8]
+                
+                if info.byteOrder == .BE {
+                    utf32bom = [0x00, 0x00, 0xFE, 0xFF]
+                } else {
+                    utf32bom = [0xFF, 0xFE, 0x00, 0x00]
+                }
+                
+                let tempData = NSMutableData()
+                tempData.appendBytes(&utf32bom, length: 4)
+                tempData.appendData(data!)
+                
+                data = tempData
+            }
+        } else {
+            data = self.dataUsingEncoding(NSMacOSRomanStringEncoding, allowLossyConversion: false)
+        }
+        return data
+    }
 }
