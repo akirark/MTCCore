@@ -349,6 +349,122 @@ public final class TextEncoding {
         return (0x21 <= c && c <= 0x7E)
     }
     
+    private static func isHankakuKatakana(c: unichar) -> Bool {
+        return (0xFF61 <= c && c <= 0xFF9F)
+    }
+    
+    private static var sHankakuToZenkakuMap: [unichar: unichar]?
+    private static var sHankakuToZenkakuDullnessMap: [unichar: unichar]?
+    private static var sHankakuToZenkakuSemiMap: [unichar: unichar]?
+    
+    private func createHankakuToZenkakuMap() -> [unichar: unichar] {
+        let dict: [unichar: unichar] = [
+            0x3002: 0xFF61, //。
+            0x300C: 0xFF62, //「
+            0x300D: 0xFF63, //」
+            0x3001: 0xFF64, //、
+            0x30FB: 0xFF65, //・
+            0x30F2: 0xFF66, //ヲ
+            0x30A1: 0xFF67, //ァ
+            0x30A3: 0xFF68, //ィ
+            0x30A5: 0xFF69, //ゥ
+            0x30A7: 0xFF6A, //ェ
+            0x30A9: 0xFF6B, //ォ
+            0x30E3: 0xFF6C, //ャ
+            0x30E5: 0xFF6D, //ュ
+            0x30E7: 0xFF6E, //ョ
+            0x30C3: 0xFF6F, //ッ
+            0x30FC: 0xFF70, //ー
+            0x30A2: 0xFF71, //ア
+            0x30A4: 0xFF72, //イ
+            0x30A6: 0xFF73, //ウ
+            0x30A8: 0xFF74, //エ
+            0x30AA: 0xFF75, //オ
+            0x30AB: 0xFF76, //カ
+            0x30AD: 0xFF77, //キ
+            0x30AF: 0xFF78, //ク
+            0x30B1: 0xFF79, //ケ
+            0x30B3: 0xFF7A, //コ
+            0x30B5: 0xFF7B, //サ
+            0x30B7: 0xFF7C, //シ
+            0x30B9: 0xFF7D, //ス
+            0x30BB: 0xFF7E, //セ
+            0x30BD: 0xFF7F, //ソ
+            
+            0x30BF: 0xFF80, //タ
+            
+            0x30C1: 0xFF81, //チ
+            0x30C4: 0xFF82, //ツ
+            0x30C6: 0xFF83, //テ
+            0x30C8: 0xFF84, //ト
+            0x30CA: 0xFF85, //ナ
+            0x30CB: 0xFF86, //ニ
+            0x30CC: 0xFF87, //ヌ
+            0x30CD: 0xFF88, //ネ
+            0x30CE: 0xFF89, //ノ
+            0x30CF: 0xFF8A, //ハ
+            0x30D2: 0xFF8B, //ヒ
+            0x30D5: 0xFF8C, //フ
+            0x30D8: 0xFF8D, //ヘ
+            0x30DB: 0xFF8E, //ホ
+            0x30DE: 0xFF8F, //マ
+            0x30DF: 0xFF90, //ミ
+            0x30E0: 0xFF91, //ム
+            0x30E1: 0xFF92, //メ
+            0x30E2: 0xFF93, //モ
+            0x30E4: 0xFF94, //ヤ
+            0x30E6: 0xFF95, //ユ
+            0x30E8: 0xFF96, //ヨ
+            0x30E9: 0xFF97, //ラ
+            0x30EA: 0xFF98, //リ
+            0x30EB: 0xFF99, //ル
+            0x30EC: 0xFF9A, //レ
+            0x30ED: 0xFF9B, //ロ
+            0x30EF: 0xFF9C, //ワ
+            0x30F3: 0xFF9D, //ン
+        ]
+        return dict
+    }
+    
+    private func createHankakuToZenkakuDullnessMap() -> [unichar: unichar] {
+        let dict: [unichar: unichar] = [
+            0x30AC: 0xFF76, //ガ
+            0x30AE: 0xFF77, //ギ
+            0x30B0: 0xFF78, //グ
+            0x30B2: 0xFF79, //ゲ
+            0x30B4: 0xFF7A, //ゴ
+            0x30B6: 0xFF7B, //ザ
+            
+            0x30B8: 0xFF7C, //ジ
+            
+            0x30BA: 0xFF7D, //ズ
+            0x30BC: 0xFF7E, //ゼ
+            0x30BE: 0xFF7F, //ゾ
+            0x30C0: 0xFF80, //ダ
+            0x30C2: 0xFF81, //ヂ
+            0x30C5: 0xFF82, //ヅ
+            0x30C7: 0xFF83, //デ
+            0x30C9: 0xFF84, //ド
+            0x30D0: 0xFF8A, //バ
+            0x30D3: 0xFF8B, //ビ
+            0x30D6: 0xFF8C, //ブ
+            0x30D9: 0xFF8D, //ベ
+            0x30DC: 0xFF8E, //ボ
+            0x30F4: 0xFF73 //ヴ
+        ]
+        return dict
+    }
+    
+    private func createHankakuToZenkakuFullSemiMap() -> [unichar: unichar] {
+        let dict: [unichar: unichar] = [
+            0x30D1: 0xFF8A, //パ
+            0x30D4: 0xFF8B, //ピ
+            0x30D7: 0xFF8C, //プ
+            0x30DA: 0xFF8D, //ペ
+            0x30DD: 0xFF8E //ポ
+        ]
+        return dict
+    }
 }
 
 public extension NSString {
