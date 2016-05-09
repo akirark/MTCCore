@@ -7,7 +7,7 @@
 //  -----------------------------------------------------------------
 //
 //  Copyright (c) 2016 Akira Hayashi
-//  This software is released under the MIT License,
+//  This software is released under the Apache 2.0 License,
 //  see LICENSE.txt for license information
 //
 //  -----------------------------------------------------------------

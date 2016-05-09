@@ -19,8 +19,7 @@ Supported line breaks are:
 * CR + LF
 * LS
 
-# License
-This software is released under the MIT License, see LICENSE.txt.
+# Copyright
+Copyright (C) 2016 Akira Hayashi. Licensed under the Apache 2.0 license. See LICENSE.txt.
 
-Copyright (c) 2016 Akira Hayashi
 http://www.rk-k.com/
