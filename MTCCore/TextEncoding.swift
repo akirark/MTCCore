@@ -349,131 +349,182 @@ public final class TextEncoding {
         return (0x21 <= c && c <= 0x7E)
     }
     
-    private static func isHankakuKatakana(c: unichar) -> Bool {
+    private static func isHankakuKatakana(c: UInt32) -> Bool {
         return (0xFF61 <= c && c <= 0xFF9F)
     }
     
-    private static var sHankakuToZenkakuMap: [unichar: unichar]?
-    private static var sHankakuToZenkakuDullnessMap: [unichar: unichar]?
-    private static var sHankakuToZenkakuSemiMap: [unichar: unichar]?
+    private static var sHankakuToZenkakuMap: [UInt32: UInt32]!
+    private static var sHankakuToZenkakuDullnessMap: [UInt32: UInt32]!
+    private static var sHankakuToZenkakuSemiMap: [UInt32: UInt32]!
     
-    private func createHankakuToZenkakuMap() -> [unichar: unichar] {
-        let dict: [unichar: unichar] = [
-            0x3002: 0xFF61, //。
-            0x300C: 0xFF62, //「
-            0x300D: 0xFF63, //」
-            0x3001: 0xFF64, //、
-            0x30FB: 0xFF65, //・
-            0x30F2: 0xFF66, //ヲ
-            0x30A1: 0xFF67, //ァ
-            0x30A3: 0xFF68, //ィ
-            0x30A5: 0xFF69, //ゥ
-            0x30A7: 0xFF6A, //ェ
-            0x30A9: 0xFF6B, //ォ
-            0x30E3: 0xFF6C, //ャ
-            0x30E5: 0xFF6D, //ュ
-            0x30E7: 0xFF6E, //ョ
-            0x30C3: 0xFF6F, //ッ
-            0x30FC: 0xFF70, //ー
-            0x30A2: 0xFF71, //ア
-            0x30A4: 0xFF72, //イ
-            0x30A6: 0xFF73, //ウ
-            0x30A8: 0xFF74, //エ
-            0x30AA: 0xFF75, //オ
-            0x30AB: 0xFF76, //カ
-            0x30AD: 0xFF77, //キ
-            0x30AF: 0xFF78, //ク
-            0x30B1: 0xFF79, //ケ
-            0x30B3: 0xFF7A, //コ
-            0x30B5: 0xFF7B, //サ
-            0x30B7: 0xFF7C, //シ
-            0x30B9: 0xFF7D, //ス
-            0x30BB: 0xFF7E, //セ
-            0x30BD: 0xFF7F, //ソ
+    private static func createHankakuToZenkakuMap() -> [UInt32: UInt32] {
+        let dict: [UInt32: UInt32] = [
+            0xFF61: 0x3002, //。
+            0xFF62: 0x300C, //「
+            0xFF63: 0x300D, //」
+            0xFF64: 0x3001, //、
+            0xFF65: 0x30FB, //・
+            0xFF66: 0x30F2, //ヲ
+            0xFF67: 0x30A1, //ァ
+            0xFF68: 0x30A3, //ィ
+            0xFF69: 0x30A5, //ゥ
+            0xFF6A: 0x30A7, //ェ
+            0xFF6B: 0x30A9, //ォ
+            0xFF6C: 0x30E3, //ャ
+            0xFF6D: 0x30E5, //ュ
+            0xFF6E: 0x30E7, //ョ
+            0xFF6F: 0x30C3, //ッ
+            0xFF70: 0x30FC, //ー
+            0xFF71: 0x30A2, //ア
+            0xFF72: 0x30A4, //イ
+            0xFF73: 0x30A6, //ウ
+            0xFF74: 0x30A8, //エ
+            0xFF75: 0x30AA, //オ
+            0xFF76: 0x30AB, //カ
+            0xFF77: 0x30AD, //キ
+            0xFF78: 0x30AF, //ク
+            0xFF79: 0x30B1, //ケ
+            0xFF7A: 0x30B3, //コ
+            0xFF7B: 0x30B5, //サ
+            0xFF7C: 0x30B7, //シ
+            0xFF7D: 0x30B9, //ス
+            0xFF7E: 0x30BB, //セ
+            0xFF7F: 0x30BD, //ソ
             
-            0x30BF: 0xFF80, //タ
+            0xFF80: 0x30BF, //タ
             
-            0x30C1: 0xFF81, //チ
-            0x30C4: 0xFF82, //ツ
-            0x30C6: 0xFF83, //テ
-            0x30C8: 0xFF84, //ト
-            0x30CA: 0xFF85, //ナ
-            0x30CB: 0xFF86, //ニ
-            0x30CC: 0xFF87, //ヌ
-            0x30CD: 0xFF88, //ネ
-            0x30CE: 0xFF89, //ノ
-            0x30CF: 0xFF8A, //ハ
-            0x30D2: 0xFF8B, //ヒ
-            0x30D5: 0xFF8C, //フ
-            0x30D8: 0xFF8D, //ヘ
-            0x30DB: 0xFF8E, //ホ
-            0x30DE: 0xFF8F, //マ
-            0x30DF: 0xFF90, //ミ
-            0x30E0: 0xFF91, //ム
-            0x30E1: 0xFF92, //メ
-            0x30E2: 0xFF93, //モ
-            0x30E4: 0xFF94, //ヤ
-            0x30E6: 0xFF95, //ユ
-            0x30E8: 0xFF96, //ヨ
-            0x30E9: 0xFF97, //ラ
-            0x30EA: 0xFF98, //リ
-            0x30EB: 0xFF99, //ル
-            0x30EC: 0xFF9A, //レ
-            0x30ED: 0xFF9B, //ロ
-            0x30EF: 0xFF9C, //ワ
-            0x30F3: 0xFF9D, //ン
+            0xFF81: 0x30C1, //チ
+            0xFF82: 0x30C4, //ツ
+            0xFF83: 0x30C6, //テ
+            0xFF84: 0x30C8, //ト
+            0xFF85: 0x30CA, //ナ
+            0xFF86: 0x30CB, //ニ
+            0xFF87: 0x30CC, //ヌ
+            0xFF88: 0x30CD, //ネ
+            0xFF89: 0x30CE, //ノ
+            0xFF8A: 0x30CF, //ハ
+            0xFF8B: 0x30D2, //ヒ
+            0xFF8C: 0x30D5, //フ
+            0xFF8D: 0x30D8, //ヘ
+            0xFF8E: 0x30DB, //ホ
+            0xFF8F: 0x30DE, //マ
+            0xFF90: 0x30DF, //ミ
+            0xFF91: 0x30E0, //ム
+            0xFF92: 0x30E1, //メ
+            0xFF93: 0x30E2, //モ
+            0xFF94: 0x30E4, //ヤ
+            0xFF95: 0x30E6, //ユ
+            0xFF96: 0x30E8, //ヨ
+            0xFF97: 0x30E9, //ラ
+            0xFF98: 0x30EA, //リ
+            0xFF99: 0x30EB, //ル
+            0xFF9A: 0x30EC, //レ
+            0xFF9B: 0x30ED, //ロ
+            0xFF9C: 0x30EF, //ワ
+            0xFF9D: 0x30F3, //ン
         ]
         return dict
     }
     
-    private func createHankakuToZenkakuDullnessMap() -> [unichar: unichar] {
-        let dict: [unichar: unichar] = [
-            0x30AC: 0xFF76, //ガ
-            0x30AE: 0xFF77, //ギ
-            0x30B0: 0xFF78, //グ
-            0x30B2: 0xFF79, //ゲ
-            0x30B4: 0xFF7A, //ゴ
-            0x30B6: 0xFF7B, //ザ
+    private static func createHankakuToZenkakuDullnessMap() -> [UInt32: UInt32] {
+        let dict: [UInt32: UInt32] = [
+            0xFF76: 0x30AC, //ガ
+            0xFF77: 0x30AE, //ギ
+            0xFF78: 0x30B0, //グ
+            0xFF79: 0x30B2, //ゲ
+            0xFF7A: 0x30B4, //ゴ
+            0xFF7B: 0x30B6, //ザ
             
-            0x30B8: 0xFF7C, //ジ
+            0xFF7C: 0x30B8, //ジ
             
-            0x30BA: 0xFF7D, //ズ
-            0x30BC: 0xFF7E, //ゼ
-            0x30BE: 0xFF7F, //ゾ
-            0x30C0: 0xFF80, //ダ
-            0x30C2: 0xFF81, //ヂ
-            0x30C5: 0xFF82, //ヅ
-            0x30C7: 0xFF83, //デ
-            0x30C9: 0xFF84, //ド
-            0x30D0: 0xFF8A, //バ
-            0x30D3: 0xFF8B, //ビ
-            0x30D6: 0xFF8C, //ブ
-            0x30D9: 0xFF8D, //ベ
-            0x30DC: 0xFF8E, //ボ
-            0x30F4: 0xFF73 //ヴ
+            0xFF7D: 0x30BA, //ズ
+            0xFF7E: 0x30BC, //ゼ
+            0xFF7F: 0x30BE, //ゾ
+            0xFF80: 0x30C0, //ダ
+            0xFF81: 0x30C2, //ヂ
+            0xFF82: 0x30C5, //ヅ
+            0xFF83: 0x30C7, //デ
+            0xFF84: 0x30C9, //ド
+            0xFF8A: 0x30D0, //バ
+            0xFF8B: 0x30D3, //ビ
+            0xFF8C: 0x30D6, //ブ
+            0xFF8D: 0x30D9, //ベ
+            0xFF8E: 0x30DC, //ボ
+            0xFF73: 0x30F4 //ヴ
         ]
         return dict
     }
     
-    private func createHankakuToZenkakuFullSemiMap() -> [unichar: unichar] {
-        let dict: [unichar: unichar] = [
-            0x30D1: 0xFF8A, //パ
-            0x30D4: 0xFF8B, //ピ
-            0x30D7: 0xFF8C, //プ
-            0x30DA: 0xFF8D, //ペ
-            0x30DD: 0xFF8E //ポ
+    private static func createHankakuToZenkakuFullSemiMap() -> [UInt32: UInt32] {
+        let dict: [UInt32: UInt32] = [
+            0xFF8A: 0x30D1, //パ
+            0xFF8B: 0x30D4, //ピ
+            0xFF8C: 0x30D7, //プ
+            0xFF8D: 0x30DA, //ペ
+            0xFF8E: 0x30DD //ポ
         ]
         return dict
     }
+    
+    /// Convert the hankaku katakana to the zenkaku katakana.
+    /// If the specified character is not hanakaku katakana, returns it.
+    public static func convertHankakuToZenkakuKatakanaCharacter(srcChar: UInt32, nextChar: UInt32, inout numOfCharsReplaced: Int?) -> UInt32 {
+        var dstChar = srcChar
+        
+        if numOfCharsReplaced != nil {
+            numOfCharsReplaced = 0
+        }
+        
+        if isHankakuKatakana(srcChar) {
+            if sHankakuToZenkakuMap == nil {
+                sHankakuToZenkakuMap = createHankakuToZenkakuMap()
+            }
+            if sHankakuToZenkakuDullnessMap == nil {
+                sHankakuToZenkakuDullnessMap = createHankakuToZenkakuDullnessMap()
+            }
+            if sHankakuToZenkakuSemiMap == nil {
+                sHankakuToZenkakuSemiMap = createHankakuToZenkakuFullSemiMap()
+            }
+            
+            if nextChar == 0xFF9E || nextChar == 0xFF9F {
+                // Check the character can lead the sonant mark or the p-sound sign in Japanese.
+                if srcChar == 0xFF73
+                    || (0xFF76 <= srcChar && srcChar <= 0xFF84)
+                    || (0xFF8A <= srcChar && srcChar <= 0xFF8E) {
+                    if nextChar == 0xFF9E {
+                        if let c = sHankakuToZenkakuDullnessMap[srcChar] {
+                            dstChar = c
+                            numOfCharsReplaced = 2
+                        }
+                    } else {
+                        if let c = sHankakuToZenkakuSemiMap[srcChar] {
+                            dstChar = c
+                            numOfCharsReplaced = 2
+                        }
+                    }
+                }
+            }
+            
+            if srcChar == dstChar {
+                if let c = sHankakuToZenkakuMap[srcChar] {
+                    dstChar = c
+                    numOfCharsReplaced = 1
+                }
+            }
+        }
+        
+        return dstChar
+    }
+    
 }
 
-public extension NSString {
+public extension String {
     
     /// Create an instance with the specified data and the encoding information.
     /// \param data                 The text data
     /// \param textEncodingInfo     The text encoding information
     /// \return Created instance or nil if it failed read the text.
-    public convenience init?(data: NSData, textEncodingInfo info: TextEncodingInfo) {
+    public init?(data: NSData, textEncodingInfo info: TextEncodingInfo) {
         var encoding: NSStringEncoding = NSMacOSRomanStringEncoding
         
         var textBytes = data.bytes
@@ -621,4 +672,40 @@ public extension NSString {
         }
         return data
     }
+    
+    /// Returns the string made by replacing the hankaku katakana to the zenkaku katakana.
+    public var stringByReplacingHankakuKatakana: String {
+        var ret = ""
+        var i = self.unicodeScalars.startIndex
+        let endIndex = self.unicodeScalars.endIndex
+        
+        while i != endIndex {
+            let c = self.unicodeScalars[i]
+            
+            if TextEncoding.isHankakuKatakana(c.value) {
+                let next = (i.advancedBy(1) != endIndex) ? self.unicodeScalars[i.advancedBy(1)].value : 0
+                var numOfChars: Int? = nil
+                let c2 = TextEncoding.convertHankakuToZenkakuKatakanaCharacter(c.value, nextChar: next, numOfCharsReplaced: &numOfChars)
+                
+                if c2 != 0 {
+                    ret.append(UnicodeScalar(c2))
+                } else {
+                    ret.append(c)
+                }
+            
+                if numOfChars != nil {
+                    i = i.advancedBy(numOfChars!)
+                } else {
+                    i = i.advancedBy(1)
+                }
+                
+            } else {
+                ret.append(c)
+                i = i.advancedBy(1)
+            }
+        }
+        
+        return ret
+    }
 }
+
