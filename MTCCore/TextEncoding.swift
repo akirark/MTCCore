@@ -63,7 +63,7 @@ private struct DetectTextEncodingContext {
     var textLength: Int
     var textOffset: Int
     
-    private init() {
+    public init() {
         encodingInfo = TextEncodingInfo()
         eucFeatures = 0
         jisFeatures = 0
@@ -78,22 +78,31 @@ public final class TextEncoding {
     public init() {
         
     }
+
+    /// Detect the text encoding information of the text data.
+    /// @param textData The text data
+    /// @return The detected text encoding information
+    public static func detectTextEncoding(of textData: Data) -> TextEncodingInfo {
+        return textData.withUnsafeBytes { (pointer: UnsafePointer<UInt8>) -> TextEncodingInfo in
+            detectTextEncodingOfTextBuffer(pointer, length: textData.count)
+        }
+    }
     
     /// Detect the text encoding information of the text buffer
     /// \param textBuffer The text data buffer
     /// \param length The length of the text buffer in bytes
     /// \return The detected text encoding information
-    public static func detectTextEncodingOfTextBuffer(textBuffer: UnsafePointer<Void>, length: Int) -> TextEncodingInfo {
+    public static func detectTextEncodingOfTextBuffer(_ textBuffer: UnsafeRawPointer, length: Int) -> TextEncodingInfo {
         var context = DetectTextEncodingContext()
-        context.textBytes = unsafeBitCast(textBuffer, UnsafePointer<UInt8>.self)
+        context.textBytes = unsafeBitCast(textBuffer, to: UnsafePointer<UInt8>.self)
         context.curBytes = context.textBytes
         context.textLength = length
         
-        if textBuffer == nil || length == 0 {
+        if length == 0 {
             return context.encodingInfo
         }
         
-        if self.detectTextEncodingByBOMWithContext(&context)
+        if self.detectTextEncodingByBOMWithContext(context: &context)
         {
             // Detected by BOM
             return context.encodingInfo
@@ -104,16 +113,15 @@ public final class TextEncoding {
         while context.textOffset < context.textLength {
             // Check possibility of UTF-8
             if !context.isNeverUTF8 {
-                if self.checkUTF8FeaturesWithContext(&context) {
+                if self.checkUTF8FeaturesWithContext(context: &context) {
                     context.textOffset += 1
-                    context.curBytes = context.curBytes.advancedBy(1)
-
+                    context.curBytes = context.curBytes.advanced(by: 1)
                     continue
                 }
             }
             
             // Check possibility of UTF-16 or UTF-32
-            if self.checkUTFnFeaturesWithContext(&context) {
+            if self.checkUTFnFeaturesWithContext(context: &context) {
                 isDetected = true
                 break
             }
@@ -128,7 +136,7 @@ public final class TextEncoding {
                     context.jisFeatures += 1
                     
                     context.textOffset += 1
-                    context.curBytes = context.curBytes.advancedBy(1)
+                    context.curBytes = context.curBytes.advanced(by: 1)
 
                     continue
                 }
@@ -138,12 +146,12 @@ public final class TextEncoding {
             if (0x80 <= context.curBytes[0] && context.curBytes[0] <= 0x8D) ||
                 (0x90 <= context.curBytes[0] && context.curBytes[0] <= 0x9F) {
                 while context.textOffset < context.textLength {
-                    if self.checkUTFnFeaturesWithContext(&context) {
+                    if self.checkUTFnFeaturesWithContext(context: &context) {
                         isDetected = true
                         break
                     }
                     context.textOffset += 1
-                    context.curBytes = context.curBytes.advancedBy(1)
+                    context.curBytes = context.curBytes.advanced(by: 1)
                 }
                 
                 if !isDetected {
@@ -157,7 +165,7 @@ public final class TextEncoding {
                 }
                 
                 break
-            } else if !self.isIncludedInASCII(context.curBytes[0]) && !self.isIncludedInJISX0201Roman(context.curBytes[0]) {
+            } else if !self.isIncludedInASCII(c: context.curBytes[0]) && !self.isIncludedInJISX0201Roman(context.curBytes[0]) {
                 // Check possibility of EUC-JP
                 if context.curBytes[0] >= 0xA1 && context.curBytes[0] <= 0xFE {
                     // Check possibility of EUC-JP Kanji
@@ -171,7 +179,7 @@ public final class TextEncoding {
             }
             
             context.textOffset += 1
-            context.curBytes = context.curBytes.advancedBy(1)
+            context.curBytes = context.curBytes.advanced(by: 1)
         }
         
         if !isDetected {
@@ -194,7 +202,8 @@ public final class TextEncoding {
     /// Detect the encoding code by BOM (Byte Order Mark)
     /// \param context 
     /// \return true if it is detected, otherwise false.
-    private static func detectTextEncodingByBOMWithContext(inout context: DetectTextEncodingContext) -> Bool {
+    //private static func detectTextEncodingByBOMWithContext(inout context: DetectTextEncodingContext) -> Bool {
+    private static func detectTextEncodingByBOMWithContext(context: inout DetectTextEncodingContext) -> Bool {
         var ret = false
         
         if context.textLength < 2 {
@@ -238,7 +247,7 @@ public final class TextEncoding {
     /// Check the possibity of the UTF-8
     /// \param context
     /// \return true if it has possibility of the UTF-8, otherwise false
-    private static func checkUTF8FeaturesWithContext(inout context: DetectTextEncodingContext) -> Bool {
+    private static func checkUTF8FeaturesWithContext(context: inout DetectTextEncodingContext) -> Bool {
         var ret = false
         
         if context.curBytes[0] == 0xFF || context.curBytes[1] == 0xFE {
@@ -284,7 +293,7 @@ public final class TextEncoding {
     /// Check the possibility of the UTF-16 or UTF-32
     /// \param context
     /// \return true if it has possibility of the UTF-16 or UTF-32, otherwise false. Also retuns false if it is not cleared.
-    private static func checkUTFnFeaturesWithContext(inout context: DetectTextEncodingContext) -> Bool {
+    private static func checkUTFnFeaturesWithContext(context: inout DetectTextEncodingContext) -> Bool {
         var ret = false
         
         var nullCount = 0
@@ -341,15 +350,15 @@ public final class TextEncoding {
         return ret
     }
     
-    private static func isIncludedInASCII(c: UInt8) -> Bool {
+    public static func isIncludedInASCII(c: UInt8) -> Bool {
         return (c <= 0x20 || c == 0x7F)
     }
     
-    private static func isIncludedInJISX0201Roman(c: UInt8) -> Bool {
+    public static func isIncludedInJISX0201Roman(_ c: UInt8) -> Bool {
         return (0x21 <= c && c <= 0x7E)
     }
     
-    private static func isHankakuKatakana(c: UInt32) -> Bool {
+    public static func isHankakuKatakana(_ c: UInt32) -> Bool {
         return (0xFF61 <= c && c <= 0xFF9F)
     }
     
@@ -468,7 +477,7 @@ public final class TextEncoding {
     
     /// Convert the hankaku katakana to the zenkaku katakana.
     /// If the specified character is not hanakaku katakana, returns it.
-    public static func convertHankakuToZenkakuKatakanaCharacter(srcChar: UInt32, nextChar: UInt32, inout numOfCharsReplaced: Int?) -> UInt32 {
+    public static func convertHankakuToZenkakuKatakanaCharacter(_ srcChar: UInt32, nextChar: UInt32, numOfCharsReplaced: inout Int?) -> UInt32 {
         var dstChar = srcChar
         
         if numOfCharsReplaced != nil {
@@ -524,36 +533,28 @@ public extension String {
     /// \param data                 The text data
     /// \param textEncodingInfo     The text encoding information
     /// \return Created instance or nil if it failed read the text.
-    public init?(data: NSData, textEncodingInfo info: TextEncodingInfo) {
-        var encoding: NSStringEncoding = NSMacOSRomanStringEncoding
-        
-        var textBytes = data.bytes
-        var textLength = data.length
+    public init?(data: Data, textEncodingInfo info: TextEncodingInfo) {
+        var encoding = String.Encoding.macOSRoman.rawValue
         var isValid = true
-        
+        var textData = data
+
         if info.encodingCode == .ShiftJIS {
             if info.charMapping == .Windows {
-                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.DOSJapanese.rawValue))
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.dosJapanese.rawValue))
             } else {
-                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.MacJapanese.rawValue))
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.macJapanese.rawValue))
             }
         } else if info.encodingCode == .JIS {
-            encoding = NSISO2022JPStringEncoding
+            encoding = String.Encoding.iso2022JP.rawValue
         } else if info.encodingCode == .EUCJP {
-            encoding = NSJapaneseEUCStringEncoding
+            encoding = String.Encoding.japaneseEUC.rawValue
         } else if info.encodingCode == .UTF8 {
-            encoding = NSUTF8StringEncoding
-            
-            if info.hasBOM && textLength >= 3 {
-                textBytes = textBytes.advancedBy(3)
-                textLength -= 3
-            }
+            encoding = String.Encoding.utf8.rawValue
         } else if info.encodingCode == .UTF16 {
-            if info.hasBOM && textLength >= 2 {
-                textBytes = textBytes.advancedBy(2)
-                textLength -= 2
+            if info.hasBOM && data.count >= 2 {
+                textData = data.subdata(in: data.startIndex.advanced(by: 2) ..< data.endIndex.advanced(by: -2))
             }
-            
+
             if info.byteOrder == .BE {
                 encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF16BE.rawValue)
             } else if info.byteOrder == .LE {
@@ -562,11 +563,10 @@ public extension String {
                 isValid = false
             }
         } else if info.encodingCode == .UTF32 {
-            if info.hasBOM && textLength >= 4 {
-                textBytes = textBytes.advancedBy(4)
-                textLength -= 4
+            if info.hasBOM && data.count >= 4 {
+                textData = data.subdata(in: data.startIndex.advanced(by: 4) ..< data.endIndex.advanced(by: -4))
             }
-            
+
             if info.byteOrder == .BE {
                 encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF32BE.rawValue)
             } else if info.byteOrder == .LE {
@@ -575,11 +575,11 @@ public extension String {
                 isValid = false
             }
         } else {
-            encoding = NSMacOSRomanStringEncoding
+            encoding = String.Encoding.macOSRoman.rawValue
         }
-        
+
         if isValid {
-            self.init(data: data, encoding: encoding)
+            self.init(data: textData, encoding: String.Encoding(rawValue: encoding))
         } else {
             return nil
         }
@@ -588,35 +588,32 @@ public extension String {
     /// Create the text data with specified text encoding information.
     /// \param info     The text encoding information.
     /// \return         The encoded text data or nil if failed to create
-    public func dataUsingTextEncodingInfo(info: TextEncodingInfo) -> NSData? {
-        var data: NSData?
+    public func dataUsingTextEncodingInfo(_ info: TextEncodingInfo) -> Data? {
+        var data: Data?
         
         if info.encodingCode == .ShiftJIS {
-            var encoding: NSStringEncoding
+            var encoding: UInt
             
             if info.charMapping == .Windows {
-                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.DOSJapanese.rawValue))
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.dosJapanese.rawValue))
             } else {
-                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.MacJapanese.rawValue))
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.macJapanese.rawValue))
             }
             
-            data = self.dataUsingEncoding(encoding, allowLossyConversion: false)
+            data = self.data(using: String.Encoding(rawValue: encoding), allowLossyConversion: false)
         } else if info.encodingCode == .JIS {
-            data = self.dataUsingEncoding(NSISO2022JPStringEncoding, allowLossyConversion: false)
+            data = self.data(using: String.Encoding.iso2022JP, allowLossyConversion: false)
         } else if info.encodingCode == .EUCJP {
-            data = self.dataUsingEncoding(NSJapaneseEUCStringEncoding, allowLossyConversion: false)
+            data = self.data(using: String.Encoding.japaneseEUC, allowLossyConversion: false)
         } else if info.encodingCode == .UTF8 {
-            data = self.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+            data = self.data(using: String.Encoding.utf8, allowLossyConversion: false)
             
             if data != nil && info.hasBOM {
-                var utf8bom: [UInt8] = [ 0xEF, 0xBB, 0xBF ]
-                let tempData = NSMutableData(bytes: &utf8bom, length: 3)
-                tempData.appendData(data!)
-                
-                data = tempData
+                let utf8bom: [UInt8] = [ 0xEF, 0xBB, 0xBF ]
+                data!.insert(contentsOf: utf8bom, at: data!.startIndex)
             }
         } else if info.encodingCode == .UTF16 && (info.byteOrder == .BE || info.byteOrder == .LE) {
-            var encoding: NSStringEncoding
+            var encoding: UInt
             
             if info.byteOrder == .BE {
                 encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF16BE.rawValue)
@@ -624,7 +621,7 @@ public extension String {
                 encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF16LE.rawValue)
             }
             
-            data = self.dataUsingEncoding(encoding, allowLossyConversion: false)
+            data = self.data(using: String.Encoding(rawValue: encoding), allowLossyConversion: false)
             
             if data != nil && info.hasBOM {
                 var utf16bom: [UInt8]
@@ -634,15 +631,11 @@ public extension String {
                 } else {
                     utf16bom = [0xFF, 0xFE]
                 }
-                
-                let tempData = NSMutableData()
-                tempData.appendBytes(&utf16bom, length: 2)
-                tempData.appendData(data!)
-                
-                data = tempData
+
+                data!.insert(contentsOf: utf16bom, at: data!.startIndex)
             }
         } else if info.encodingCode == .UTF32 && (info.byteOrder == .BE || info.byteOrder == .LE) {
-            var encoding: NSStringEncoding
+            var encoding: UInt
             
             if info.byteOrder == .BE {
                 encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF32BE.rawValue)
@@ -650,7 +643,7 @@ public extension String {
                 encoding = CFStringConvertEncodingToNSStringEncoding(CFStringBuiltInEncodings.UTF32LE.rawValue)
             }
             
-            data = self.dataUsingEncoding(encoding, allowLossyConversion: false)
+            data = self.data(using: String.Encoding(rawValue: encoding), allowLossyConversion: false)
             
             if data != nil && info.hasBOM {
                 var utf32bom: [UInt8]
@@ -660,15 +653,11 @@ public extension String {
                 } else {
                     utf32bom = [0xFF, 0xFE, 0x00, 0x00]
                 }
-                
-                let tempData = NSMutableData()
-                tempData.appendBytes(&utf32bom, length: 4)
-                tempData.appendData(data!)
-                
-                data = tempData
+
+                data!.insert(contentsOf: utf32bom, at: data!.startIndex)
             }
         } else {
-            data = self.dataUsingEncoding(NSMacOSRomanStringEncoding, allowLossyConversion: false)
+            data = self.data(using: .macOSRoman, allowLossyConversion: false)
         }
         return data
     }
@@ -683,25 +672,27 @@ public extension String {
             let c = self.unicodeScalars[i]
             
             if TextEncoding.isHankakuKatakana(c.value) {
-                let next = (i.advancedBy(1) != endIndex) ? self.unicodeScalars[i.advancedBy(1)].value : 0
+                let nextIndex = self.unicodeScalars.index(after: i)
+                let next = (nextIndex != endIndex) ? self.unicodeScalars[nextIndex].value : 0
+
                 var numOfChars: Int? = nil
                 let c2 = TextEncoding.convertHankakuToZenkakuKatakanaCharacter(c.value, nextChar: next, numOfCharsReplaced: &numOfChars)
                 
                 if c2 != 0 {
-                    ret.append(UnicodeScalar(c2))
+                    ret.append(String(UnicodeScalar(c2)!))
                 } else {
-                    ret.append(c)
+                    ret.append(String(c))
                 }
             
                 if numOfChars != nil {
-                    i = i.advancedBy(numOfChars!)
+                    i = self.unicodeScalars.index(i, offsetBy: numOfChars!)
                 } else {
-                    i = i.advancedBy(1)
+                    i = self.unicodeScalars.index(after: i)
                 }
                 
             } else {
-                ret.append(c)
-                i = i.advancedBy(1)
+                ret.append(String(c))
+                i = self.unicodeScalars.index(after: i)
             }
         }
         

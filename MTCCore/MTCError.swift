@@ -15,7 +15,7 @@
 
 import Foundation
 
-public enum MTCError : ErrorType {
+public enum MTCError : Error {
     case Unknown
     case InvalidParameter
     case InvalidLineBreakType

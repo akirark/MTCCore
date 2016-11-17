@@ -38,7 +38,7 @@ public final class LineBreak {
     /// Detects the line break type of the text
     /// \param text The text to be checked
     /// \return Detected line break type
-    public static func detectLineBreakInText(text: String) -> LineBreakType {
+    public static func detectLineBreakInText(_ text: String) -> LineBreakType {
         var ret = LineBreakType.Unknown
         var prevCharacter: Character = "\0"
         
@@ -74,7 +74,7 @@ public final class LineBreak {
     /// \param text The text
     /// \param type The new line break type
     /// \return The new text
-    public static func replaceLineBreaksInText(text: String, type: LineBreakType) throws -> String {
+    public static func replaceLineBreaksInText(_ text: String, type: LineBreakType) throws -> String {
         var ret: String = ""
         
         let lbc: Character

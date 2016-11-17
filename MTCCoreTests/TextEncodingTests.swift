@@ -19,24 +19,28 @@ class TextEncodingTests: XCTestCase {
         super.tearDown()
     }
     
-    private func resourceFileWithName(fileName: String) -> String {
-        let baseName = (fileName as NSString).stringByDeletingPathExtension
+    private func resourceFileWithName(_ fileName: String) -> String {
+        let baseName = (fileName as NSString).deletingPathExtension
         let ext = (fileName as NSString).pathExtension
-        let path = NSBundle(forClass: self.dynamicType).pathForResource(baseName, ofType: ext)
+        let path = Bundle(for: type(of: self)).path(forResource: baseName, ofType: ext)
         XCTAssertNotNil(path, "Resource file is not found")
         return path!
     }
     
-    private func dataWithFileName(fileName: String) -> NSData {
-        let data = NSData(contentsOfFile: self.resourceFileWithName(fileName))
-        XCTAssertNotNil(data, "Couldn't read the resource file")
-        return data!
+    private func dataWithFileName(_ fileName: String) -> Data {
+        do {
+            let data = try Data(contentsOf: URL(fileURLWithPath: self.resourceFileWithName(fileName)))
+            XCTAssertNotNil(data, "Couldn't read the resource file")
+            return data
+        } catch {
+            fatalError("Failed read file")
+        }
     }
 
     func testDetectUTF8() {
         let data = dataWithFileName("UTF8.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
-        
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
+
         XCTAssertEqual(encodingInfo.encodingCode, EncodingCode.UTF8)
         XCTAssertEqual(encodingInfo.hasBOM, false)
         XCTAssertEqual(encodingInfo.byteOrder, ByteOrder.Unknown)
@@ -44,8 +48,8 @@ class TextEncodingTests: XCTestCase {
 
     func testDetectUTF8_BOM() {
         let data = dataWithFileName("UTF8_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
-        
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
+
         XCTAssertEqual(encodingInfo.encodingCode, EncodingCode.UTF8)
         XCTAssertEqual(encodingInfo.hasBOM, true)
         XCTAssertEqual(encodingInfo.byteOrder, ByteOrder.Unknown)
@@ -53,8 +57,8 @@ class TextEncodingTests: XCTestCase {
     
     func testDetectUTF16LE() {
         let data = dataWithFileName("UTF16LE.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
-        
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
+
         XCTAssertEqual(encodingInfo.encodingCode, EncodingCode.UTF16)
         XCTAssertEqual(encodingInfo.hasBOM, false)
         XCTAssertEqual(encodingInfo.byteOrder, ByteOrder.LE)
@@ -62,8 +66,8 @@ class TextEncodingTests: XCTestCase {
 
     func testDetectUTF16LE_BOM() {
         let data = dataWithFileName("UTF16LE_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
-        
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
+
         XCTAssertEqual(encodingInfo.encodingCode, EncodingCode.UTF16)
         XCTAssertEqual(encodingInfo.hasBOM, true)
         XCTAssertEqual(encodingInfo.byteOrder, ByteOrder.LE)
@@ -71,8 +75,8 @@ class TextEncodingTests: XCTestCase {
 
     func testDetectUTF16BE() {
         let data = dataWithFileName("UTF16BE.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
-        
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
+
         XCTAssertEqual(encodingInfo.encodingCode, EncodingCode.UTF16)
         XCTAssertEqual(encodingInfo.hasBOM, false)
         XCTAssertEqual(encodingInfo.byteOrder, ByteOrder.BE)
@@ -80,8 +84,8 @@ class TextEncodingTests: XCTestCase {
     
     func testDetectUTF16BE_BOM() {
         let data = dataWithFileName("UTF16BE_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
-        
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
+
         XCTAssertEqual(encodingInfo.encodingCode, EncodingCode.UTF16)
         XCTAssertEqual(encodingInfo.hasBOM, true)
         XCTAssertEqual(encodingInfo.byteOrder, ByteOrder.BE)
@@ -89,8 +93,8 @@ class TextEncodingTests: XCTestCase {
 
     func testDetectUTF32LE() {
         let data = dataWithFileName("UTF32LE.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
-        
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
+
         XCTAssertEqual(encodingInfo.encodingCode, EncodingCode.UTF32)
         XCTAssertEqual(encodingInfo.hasBOM, false)
         XCTAssertEqual(encodingInfo.byteOrder, ByteOrder.LE)
@@ -98,7 +102,7 @@ class TextEncodingTests: XCTestCase {
     
     func testDetectUTF32LE_BOM() {
         let data = dataWithFileName("UTF32LE_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         XCTAssertEqual(encodingInfo.encodingCode, EncodingCode.UTF32)
         XCTAssertEqual(encodingInfo.hasBOM, true)
@@ -107,7 +111,7 @@ class TextEncodingTests: XCTestCase {
     
     func testDetectUTF32BE() {
         let data = dataWithFileName("UTF32BE.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         XCTAssertEqual(encodingInfo.encodingCode, EncodingCode.UTF32)
         XCTAssertEqual(encodingInfo.hasBOM, false)
@@ -116,7 +120,7 @@ class TextEncodingTests: XCTestCase {
     
     func testDetectUTF32BE_BOM() {
         let data = dataWithFileName("UTF32BE_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         XCTAssertEqual(encodingInfo.encodingCode, EncodingCode.UTF32)
         XCTAssertEqual(encodingInfo.hasBOM, true)
@@ -125,7 +129,7 @@ class TextEncodingTests: XCTestCase {
     
     func testReadTextEUCJP() {
         let data = dataWithFileName("EUCJP.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str, "Failed read the text with the encoding info")
@@ -133,7 +137,7 @@ class TextEncodingTests: XCTestCase {
     
     func testReadTextJIS() {
         let data = dataWithFileName("JIS.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str, "Failed read the text with the encoding info")
@@ -141,7 +145,7 @@ class TextEncodingTests: XCTestCase {
 
     func testReadTextSJIS() {
         let data = dataWithFileName("SJIS.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str, "Failed read the text with the encoding info")
@@ -149,7 +153,7 @@ class TextEncodingTests: XCTestCase {
 
     func testReadTextUTF8() {
         let data = dataWithFileName("UTF8.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str, "Failed read the text with the encoding info")
@@ -157,7 +161,7 @@ class TextEncodingTests: XCTestCase {
     
     func testReadTextUTF8_BOM() {
         let data = dataWithFileName("UTF8_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str, "Failed read the text with the encoding info")
@@ -165,7 +169,7 @@ class TextEncodingTests: XCTestCase {
 
     func testReadTextUTF16BE() {
         let data = dataWithFileName("UTF16BE.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str, "Failed read the text with the encoding info")
@@ -173,7 +177,7 @@ class TextEncodingTests: XCTestCase {
 
     func testReadTextUTF16BE_BOM() {
         let data = dataWithFileName("UTF16BE_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str, "Failed read the text with the encoding info")
@@ -181,7 +185,7 @@ class TextEncodingTests: XCTestCase {
 
     func testReadTextUTF16LE() {
         let data = dataWithFileName("UTF16LE.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str, "Failed read the text with the encoding info")
@@ -189,7 +193,7 @@ class TextEncodingTests: XCTestCase {
 
     func testReadTextUTF16LE_BOM() {
         let data = dataWithFileName("UTF16LE_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str, "Failed read the text with the encoding info")
@@ -197,7 +201,7 @@ class TextEncodingTests: XCTestCase {
 
     func testReadTextUTF32BE() {
         let data = dataWithFileName("UTF32BE.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str, "Failed read the text with the encoding info")
@@ -205,7 +209,7 @@ class TextEncodingTests: XCTestCase {
     
     func testReadTextUTF32BE_BOM() {
         let data = dataWithFileName("UTF32BE_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str, "Failed read the text with the encoding info")
@@ -213,7 +217,7 @@ class TextEncodingTests: XCTestCase {
     
     func testReadTextUTF32LE() {
         let data = dataWithFileName("UTF32LE.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str, "Failed read the text with the encoding info")
@@ -221,7 +225,7 @@ class TextEncodingTests: XCTestCase {
     
     func testReadTextUTF32LE_BOM() {
         let data = dataWithFileName("UTF32LE_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str, "Failed read the text with the encoding info")
@@ -229,7 +233,7 @@ class TextEncodingTests: XCTestCase {
 
     func testCreateTextEUCJP() {
         let data = dataWithFileName("EUCJP.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str)
         
@@ -240,7 +244,7 @@ class TextEncodingTests: XCTestCase {
 
     func testCreateTextJIS() {
         let data = dataWithFileName("JIS.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str)
         
@@ -251,7 +255,7 @@ class TextEncodingTests: XCTestCase {
     
     func testCreateTextSJIS() {
         let data = dataWithFileName("SJIS.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str)
         
@@ -262,7 +266,7 @@ class TextEncodingTests: XCTestCase {
 
     func testCreateTextUTF8() {
         let data = dataWithFileName("UTF8.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str)
         
@@ -273,7 +277,7 @@ class TextEncodingTests: XCTestCase {
 
     func testCreateTextUTF8_BOM() {
         let data = dataWithFileName("UTF8_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str)
         
@@ -284,7 +288,7 @@ class TextEncodingTests: XCTestCase {
 
     func testCreateTextUTF16BE() {
         let data = dataWithFileName("UTF16BE.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str)
         
@@ -295,7 +299,7 @@ class TextEncodingTests: XCTestCase {
 
     func testCreateTextUTF16BE_BOM() {
         let data = dataWithFileName("UTF16BE_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str)
         
@@ -306,7 +310,7 @@ class TextEncodingTests: XCTestCase {
 
     func testCreateTextUTF16LE() {
         let data = dataWithFileName("UTF16LE.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str)
         
@@ -317,7 +321,7 @@ class TextEncodingTests: XCTestCase {
 
     func testCreateTextUTF16LE_BOM() {
         let data = dataWithFileName("UTF16LE_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str)
         
@@ -328,7 +332,7 @@ class TextEncodingTests: XCTestCase {
 
     func testCreateTextUTF32BE() {
         let data = dataWithFileName("UTF32BE.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str)
         
@@ -339,7 +343,7 @@ class TextEncodingTests: XCTestCase {
 
     func testCreateTextUTF32BE_BOM() {
         let data = dataWithFileName("UTF32BE_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str)
         
@@ -350,7 +354,7 @@ class TextEncodingTests: XCTestCase {
 
     func testCreateTextUTF32LE() {
         let data = dataWithFileName("UTF32LE.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str)
         
@@ -361,7 +365,7 @@ class TextEncodingTests: XCTestCase {
 
     func testCreateTextUTF32LE_BOM() {
         let data = dataWithFileName("UTF32LE_BOM.txt")
-        let encodingInfo = TextEncoding.detectTextEncodingOfTextBuffer(data.bytes, length: data.length)
+        let encodingInfo = TextEncoding.detectTextEncoding(of: data)
         let str = String(data: data, textEncodingInfo: encodingInfo)
         XCTAssertNotNil(str)
         
