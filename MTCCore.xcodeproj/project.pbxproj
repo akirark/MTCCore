@@ -22,11 +22,9 @@
 		E942CE9D1CC7DE93007FE26A /* UTF16LE_BOM.txt in Resources */ = {isa = PBXBuildFile; fileRef = E942CE9A1CC7DE93007FE26A /* UTF16LE_BOM.txt */; };
 		E942CE9E1CC7DE93007FE26A /* UTF8.txt in Resources */ = {isa = PBXBuildFile; fileRef = E942CE9B1CC7DE93007FE26A /* UTF8.txt */; };
 		E942CE9F1CC7DE93007FE26A /* UTF8_BOM.txt in Resources */ = {isa = PBXBuildFile; fileRef = E942CE9C1CC7DE93007FE26A /* UTF8_BOM.txt */; };
-		E9A3E8051CC3D7800066AF62 /* MTCCore.h in Headers */ = {isa = PBXBuildFile; fileRef = E9A3E8041CC3D7800066AF62 /* MTCCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9A3E80C1CC3D7800066AF62 /* MTCCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9A3E8011CC3D7800066AF62 /* MTCCore.framework */; };
 		E9A3E81E1CC3D96E0066AF62 /* LineBreak.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A3E81D1CC3D96E0066AF62 /* LineBreak.swift */; };
 		E9A3E8201CC3DD610066AF62 /* LineBreakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A3E81F1CC3DD610066AF62 /* LineBreakTests.swift */; };
-		E9A3E8221CC3EE0D0066AF62 /* MTCError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A3E8211CC3EE0D0066AF62 /* MTCError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,13 +54,11 @@
 		E942CE9B1CC7DE93007FE26A /* UTF8.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UTF8.txt; sourceTree = "<group>"; };
 		E942CE9C1CC7DE93007FE26A /* UTF8_BOM.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UTF8_BOM.txt; sourceTree = "<group>"; };
 		E9A3E8011CC3D7800066AF62 /* MTCCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MTCCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E9A3E8041CC3D7800066AF62 /* MTCCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTCCore.h; sourceTree = "<group>"; };
 		E9A3E8061CC3D7800066AF62 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E9A3E80B1CC3D7800066AF62 /* MTCCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MTCCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9A3E8121CC3D7800066AF62 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E9A3E81D1CC3D96E0066AF62 /* LineBreak.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineBreak.swift; sourceTree = "<group>"; };
 		E9A3E81F1CC3DD610066AF62 /* LineBreakTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineBreakTests.swift; sourceTree = "<group>"; };
-		E9A3E8211CC3EE0D0066AF62 /* MTCError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MTCError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,9 +121,7 @@
 		E9A3E8031CC3D7800066AF62 /* MTCCore */ = {
 			isa = PBXGroup;
 			children = (
-				E9A3E8041CC3D7800066AF62 /* MTCCore.h */,
 				E9A3E8061CC3D7800066AF62 /* Info.plist */,
-				E9A3E8211CC3EE0D0066AF62 /* MTCError.swift */,
 				E9A3E81D1CC3D96E0066AF62 /* LineBreak.swift */,
 				E92F7D791CC67C3800F54AA6 /* TextEncoding.swift */,
 			);
@@ -152,7 +146,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9A3E8051CC3D7800066AF62 /* MTCCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,7 +261,6 @@
 			files = (
 				E9A3E81E1CC3D96E0066AF62 /* LineBreak.swift in Sources */,
 				E92F7D7A1CC67C3800F54AA6 /* TextEncoding.swift in Sources */,
-				E9A3E8221CC3EE0D0066AF62 /* MTCError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

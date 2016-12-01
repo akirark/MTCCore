@@ -4,20 +4,18 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/MTCCore/LineBreak.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MTCCore/TextEncoding.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/MTCCore/MTCError.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MTCCore/Info.plist" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/MTCCore/MTCCore.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/LineBreakTests.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/UTF32BE.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/UTF8.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/UTF32BE.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/JIS.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/UTF16BE_BOM.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/UTF16LE_BOM.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/SJIS.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/UTF16BE_BOM.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/UTF16BE.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/UTF16LE.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/UTF8_BOM.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/UTF32LE_BOM.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/UTF16LE.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/SJIS.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/UTF32BE_BOM.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/EUCJP.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MTCCoreTests/TestDatas/UTF32LE.txt" isTestSource="false" />
