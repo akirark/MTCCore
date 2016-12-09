@@ -1,7 +1,7 @@
-MTCCore
-=============
+# MTCCore
 
-# Introduction
+
+## Introduction
 MTCCore is a core of the MultiTextConverter.
 It can detect line breaks and some text encodings.
 
@@ -19,7 +19,7 @@ Supported line breaks are:
 * CR + LF
 * LS
 
-# Copyright
+## Copyright
 Copyright (C) 2016 Akira Hayashi. Licensed under the Apache 2.0 license. See LICENSE.txt.
 
 http://www.rk-k.com/
