@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5892307D7361FF089CBF5F32 /* HTMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 589231913F81EDB2EC328627 /* HTMLDocument.swift */; };
+		58923411E9A3A953855DC6A1 /* MarkupTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58923ECE6FE7468DFD5A8396 /* MarkupTag.swift */; };
 		E92CE91B1CC9270300E5853F /* EUCJP.txt in Resources */ = {isa = PBXBuildFile; fileRef = E92CE9111CC9270300E5853F /* EUCJP.txt */; };
 		E92CE91C1CC9270300E5853F /* JIS.txt in Resources */ = {isa = PBXBuildFile; fileRef = E92CE9121CC9270300E5853F /* JIS.txt */; };
 		E92CE91D1CC9270300E5853F /* SJIS.txt in Resources */ = {isa = PBXBuildFile; fileRef = E92CE9131CC9270300E5853F /* SJIS.txt */; };
@@ -38,6 +40,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		589231913F81EDB2EC328627 /* HTMLDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLDocument.swift; sourceTree = "<group>"; };
+		58923ECE6FE7468DFD5A8396 /* MarkupTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarkupTag.swift; sourceTree = "<group>"; };
 		E92CE9111CC9270300E5853F /* EUCJP.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EUCJP.txt; sourceTree = "<group>"; };
 		E92CE9121CC9270300E5853F /* JIS.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = JIS.txt; sourceTree = "<group>"; };
 		E92CE9131CC9270300E5853F /* SJIS.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SJIS.txt; sourceTree = "<group>"; };
@@ -124,6 +128,8 @@
 				E9A3E8061CC3D7800066AF62 /* Info.plist */,
 				E9A3E81D1CC3D96E0066AF62 /* LineBreak.swift */,
 				E92F7D791CC67C3800F54AA6 /* TextEncoding.swift */,
+				589231913F81EDB2EC328627 /* HTMLDocument.swift */,
+				58923ECE6FE7468DFD5A8396 /* MarkupTag.swift */,
 			);
 			path = MTCCore;
 			sourceTree = "<group>";
@@ -261,6 +267,8 @@
 			files = (
 				E9A3E81E1CC3D96E0066AF62 /* LineBreak.swift in Sources */,
 				E92F7D7A1CC67C3800F54AA6 /* TextEncoding.swift in Sources */,
+				5892307D7361FF089CBF5F32 /* HTMLDocument.swift in Sources */,
+				58923411E9A3A953855DC6A1 /* MarkupTag.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
