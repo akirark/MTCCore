@@ -59,7 +59,7 @@ public class HTMLDocument {
     /// Returns the text of the markup tag
     /// @return The founded text.
     public func markupTagString(from offset: String.Index) -> String {
-
+        return ""
     }
 }
 

@@ -35,7 +35,7 @@ public final class LineBreak {
     /// \return Detected line break type
     public static func lineBreakType(inText text: String) -> Type? {
 
-        for c in text.characters {
+        for c in text {
             if let type = Type(rawValue: c) {
                 return type
             }
@@ -52,7 +52,7 @@ public final class LineBreak {
         let lbc = type.rawValue
         var replacedText = ""
 
-        for c in text.characters {
+        for c in text {
             if let _ = Type(rawValue: c) {
                 replacedText.append(lbc)
             } else {

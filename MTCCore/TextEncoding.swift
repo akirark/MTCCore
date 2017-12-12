@@ -92,7 +92,7 @@ public final class TextEncoding {
     /// \return The detected text encoding information
     public static func encoding(of textBuffer: UnsafeRawPointer, length: Int) -> EncodingInfo {
         var context = DetectEncodingContext()
-        context.textBytes = unsafeBitCast(textBuffer, to: UnsafePointer<UInt8>.self)
+        context.textBytes = textBuffer.assumingMemoryBound(to: UInt8.self)
         context.curBytes = context.textBytes
         context.textLength = length
         
